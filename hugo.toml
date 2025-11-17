@@ -1,0 +1,14 @@
+baseURL = 'https://brianscaturro.com/'
+languageCode = 'en-us'
+title = "Brian's Blog"
+theme = 'terminal'
+
+[params]
+author = "Brian Scaturro"
+readMore = "Continue reading"
+
+[markup.highlight]
+noClasses = false
+
+[languages.en.params.logo]
+  logoText = "Brian's Blog"
