@@ -1,14 +1,17 @@
 baseURL = 'https://brianscaturro.com/'
 languageCode = 'en-us'
-title = "Brian's Blog"
+title = "Brian Scaturro's Blog"
 theme = 'terminal'
 
 [params]
 author = "Brian Scaturro"
 readMore = "Continue reading"
+subtitle = "Essays and explorations in building software, programming languages, and modern development."
+description = "Thoughts on software engineering, programming languages, and the tools we build along the way."
+keywords = "software engineering, programming, architecture, Clojure, TypeScript, AI"
 
 [markup.highlight]
 noClasses = false
 
 [languages.en.params.logo]
-  logoText = "Brian's Blog"
+  logoText = "Brian Scaturro's Blog"
