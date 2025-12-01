@@ -1,6 +1,6 @@
 +++
 title = "Cogs: Agents as Channels"
-date = "2025-11-13T10:58:42-05:00"
+date = "2025-12-01T10:58:42-05:00"
 #dateFormat = "2006-01-02" # This value can be configured for per-post date formatting
 author = "Brian Scaturro"
 cover = "channel.gif"
