@@ -10,3 +10,7 @@
 
 # Node if you ever add tooling
 node_modules/
+
+# Local working docs (not for the public repo)
+/HANDOFF.md
+/.scratch/
