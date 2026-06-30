@@ -1,17 +1,19 @@
 baseURL = 'https://brianscaturro.com/'
 languageCode = 'en-us'
 title = "Brian Scaturro's Blog"
-theme = 'terminal'
+
+# Custom theme lives in ./layouts + ./assets (panr/terminal submodule retired).
 
 [params]
 author = "Brian Scaturro"
-readMore = "Continue reading"
+wordmark = "Brian Scaturro"
 subtitle = "Essays and explorations in building software, programming languages, and modern development."
 description = "Thoughts on software engineering, programming languages, and the tools we build along the way."
 keywords = "software engineering, programming, architecture, Clojure, TypeScript, AI"
 
-[markup.highlight]
-noClasses = false
-
-[languages.en.params.logo]
-  logoText = "Brian Scaturro's Blog"
+[markup]
+  [markup.highlight]
+    noClasses = false
+    tabWidth = 2
+  [markup.goldmark.renderer]
+    unsafe = true

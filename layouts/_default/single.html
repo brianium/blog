@@ -1,0 +1,21 @@
+{{ define "main" }}
+<article class="post">
+  {{ partial "cover-hero.html" . }}
+  <div class="container">
+    <header class="post-header">
+      <p class="eyebrow">
+        {{- range $i, $t := .Params.tags }}{{ if $i }} · {{ end }}<a href="{{ (printf "/tags/%s/" ($t | urlize)) | relLangURL }}">{{ $t }}</a>{{ end -}}
+        {{- if and .Params.tags .Date }} · {{ end -}}
+        {{- if .Date }}{{ .Date.Format "Jan 2006" }}{{ end -}}
+      </p>
+      <h1 class="post-title">{{ .Title }}</h1>
+      {{ with or .Params.author site.Params.author }}<p class="byline">{{ . }}</p>{{ end }}
+      <hr class="rule">
+    </header>
+    <div class="prose">
+      {{ .Content }}
+    </div>
+    {{ partial "post-nav.html" . }}
+  </div>
+</article>
+{{ end }}

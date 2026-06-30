@@ -1,0 +1,43 @@
+{{- /*
+  cover-assets — resolve a page's cover to { poster, mp4, webm } URLs.
+  Returns a dict; produces no output (callers use its return value).
+
+  Resolution order:
+    1. Per-post video:  coverVideo = "cover.mp4" in the page bundle (+ .webm sibling),
+       with coverPoster (or the default poster) as the still.
+    2. Per-post still:   coverPoster (or legacy `cover`) only — no video.
+    3. Site default:     the post specifies no cover at all → fall back to the
+       ambient assets in assets/cover/ (default.mp4 / .webm / default-poster.jpg).
+
+  So a real per-post cover always wins; the default only fills the gap. Drop a
+  cover into a post's bundle + set coverVideo/coverPoster to override it.
+*/ -}}
+{{- $ownPoster := "" -}}
+{{- $ownMp4 := "" -}}
+{{- $ownWebm := "" -}}
+{{- with .Param "coverPoster" }}{{ with $.Resources.GetMatch . }}{{ $ownPoster = .RelPermalink }}{{ end }}{{ end -}}
+{{- if not $ownPoster }}{{ with .Param "cover" }}{{ with $.Resources.GetMatch . }}{{ $ownPoster = .RelPermalink }}{{ end }}{{ end }}{{ end -}}
+{{- with .Param "coverVideo" -}}
+  {{- with $.Resources.GetMatch . }}{{ $ownMp4 = .RelPermalink }}{{ end -}}
+  {{- with $.Resources.GetMatch (replace . ".mp4" ".webm") }}{{ $ownWebm = .RelPermalink }}{{ end -}}
+{{- end -}}
+
+{{- $poster := $ownPoster -}}
+{{- $mp4 := $ownMp4 -}}
+{{- $webm := $ownWebm -}}
+{{- $isDefault := false -}}
+{{- if $ownMp4 -}}
+  {{- /* own video: ensure it has a poster (default poster if none supplied) */ -}}
+  {{- if not $poster }}{{ with resources.Get "cover/default-poster.jpg" }}{{ $poster = .RelPermalink }}{{ end }}{{ end -}}
+{{- else if not $ownPoster -}}
+  {{- /* no cover at all: site default video + poster */ -}}
+  {{- $isDefault = true -}}
+  {{- with resources.Get "cover/default-poster.jpg" }}{{ $poster = .RelPermalink }}{{ end -}}
+  {{- with resources.Get "cover/default.mp4" }}{{ $mp4 = .RelPermalink }}{{ end -}}
+  {{- with resources.Get "cover/default.webm" }}{{ $webm = .RelPermalink }}{{ end -}}
+{{- end -}}
+{{- /* Deterministic per-post hue (0-359) for tinting the default cover only.
+       Derived from the title, so every post gets a stable, distinct color and
+       new posts tint themselves automatically. Ignored for real covers. */ -}}
+{{- $hue := mod (hash.FNV32a .Title) 360 -}}
+{{- return (dict "poster" $poster "mp4" $mp4 "webm" $webm "isDefault" $isDefault "hue" $hue) -}}

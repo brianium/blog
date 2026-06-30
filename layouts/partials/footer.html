@@ -1,0 +1,9 @@
+<footer class="site-footer">
+  <div class="container container--wide">
+    <span>© {{ now.Year }} {{ site.Params.author | default "Brian Scaturro" }}</span>
+    <span>
+      {{ with site.Home.OutputFormats.Get "rss" }}<a href="{{ .RelPermalink }}">RSS</a> · {{ end }}
+      Built with <a href="https://gohugo.io">Hugo</a>
+    </span>
+  </div>
+</footer>

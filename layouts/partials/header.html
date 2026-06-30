@@ -1,0 +1,9 @@
+<header class="site-header">
+  <div class="container container--wide header-inner">
+    <a class="brand" href="{{ "/" | relLangURL }}">{{ site.Params.wordmark | default site.Title }}</a>
+    <nav class="site-nav">
+      <a href="{{ "/posts/" | relLangURL }}">Writing</a>
+      {{ with site.Home.OutputFormats.Get "rss" }}<a href="{{ .RelPermalink }}">RSS</a>{{ end }}
+    </nav>
+  </div>
+</header>

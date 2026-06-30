@@ -1,0 +1,17 @@
+{{- /*
+  cover-hero — the per-post video cover signature, rendered as a full-bleed
+  cinemascope band (styled in assets/css/main.css, animated by
+  assets/js/cover-hero.js). Called from single.html.
+
+  Cover URLs (per-post, or the site default) come from cover-assets.html.
+  Renders nothing only if even the default poster is missing.
+*/ -}}
+{{- $c := partial "cover-assets.html" . -}}
+{{- with $c.poster -}}
+<figure class="cover-hero{{ if $c.isDefault }} cover-hero--tinted{{ end }}"{{ if $c.isDefault }} style="--cover-hue: {{ $c.hue }}deg"{{ end }}{{ if $c.mp4 }} data-cover-video{{ end }}>
+  <img class="cover-hero__poster" src="{{ . }}" alt="{{ $.Title | plainify | default " " }}" fetchpriority="high" decoding="async">
+  {{- if $c.mp4 -}}
+  <video class="cover-hero__video" muted loop playsinline preload="none" poster="{{ . }}" aria-hidden="true" tabindex="-1" data-mp4="{{ $c.mp4 }}"{{ with $c.webm }} data-webm="{{ . }}"{{ end }}></video>
+  {{- end -}}
+</figure>
+{{- end -}}

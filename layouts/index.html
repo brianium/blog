@@ -1,0 +1,13 @@
+{{ define "main" }}
+<div class="container container--wide home">
+  <header class="masthead">
+    <h1 class="wordmark">{{ site.Params.wordmark | default site.Title }}</h1>
+    {{ with site.Params.subtitle }}<p class="subtitle">{{ . }}</p>{{ end }}
+  </header>
+  <ul class="post-list">
+    {{ range (where site.RegularPages "Section" "posts") }}
+      {{ partial "post-card.html" . }}
+    {{ end }}
+  </ul>
+</div>
+{{ end }}

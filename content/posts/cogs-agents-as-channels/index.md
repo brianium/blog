@@ -3,7 +3,9 @@ title = "Cogs: Agents as Channels"
 date = "2025-12-01T10:58:42-05:00"
 #dateFormat = "2006-01-02" # This value can be configured for per-post date formatting
 author = "Brian Scaturro"
-cover = "channel.gif"
+# No coverPoster/coverVideo → uses the site-default ambient cover (assets/cover/).
+# Drop cover-poster.jpg + cover.mp4/.webm into this bundle and set coverPoster/
+# coverVideo here to give this post its own cover.
 tags = ["clojure", "realtime", "ai"]
 keywords = false
 description = "A deep dive into treating LLM-powered agents as core.async-style channels in Clojure—using context, transition functions, and tooling to build rich, composable, and stateful workflows."
@@ -11,6 +13,8 @@ showFullContent = false
 readingTime = false
 hideComments = false
 +++
+
+![Two cog agents passing a value across a Clojure core.async channel](channel.gif)
 
 LLM based applications are inherently workflow oriented. All of our favorite tools and services in this new glorious age are predicated upon us messaging an agent and then waiting for a response. Sometimes we have to wait for a while because those agents are using tools or messaging other agents that have access to different tools.
 

@@ -1,0 +1,13 @@
+{{ define "main" }}
+<div class="container container--wide">
+  <header class="masthead">
+    <p class="eyebrow">Tag</p>
+    <h1 class="wordmark">#{{ .Title }}</h1>
+  </header>
+  <ul class="post-list">
+    {{ range .Pages }}
+      {{ partial "post-card.html" . }}
+    {{ end }}
+  </ul>
+</div>
+{{ end }}
