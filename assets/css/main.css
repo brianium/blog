@@ -1,0 +1,348 @@
+/* =========================================================================
+   brianscaturro.com — custom theme
+   Built from DESIGN.md. Concept: "screening room" — a quiet, near-neutral
+   page where each post's video cover is the only saturated color.
+   ========================================================================= */
+
+/* ---- Tokens ---- */
+:root {
+  /* dark (primary) */
+  --ink: #0C0E12;
+  --surface: #14171C;
+  --line: #232830;
+  --text: #E7E9EC;
+  --text-dim: #9AA1A9;
+  --accent: #9D8DF1;
+  --accent-hover: #BBB0FF;
+
+  /* type */
+  --display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* measure & rhythm */
+  --col: 45rem;     /* reading column (~66ch) */
+  --wide: 64rem;    /* header / footer / home list */
+  --pad: 1.5rem;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --ink: #F4F5F6;
+    --surface: #FFFFFF;
+    --line: #DEE2E6;
+    --text: #15181C;
+    --text-dim: #5C636B;
+    --accent: #5B49C9;
+    --accent-hover: #3F2FA6;
+  }
+}
+
+/* ---- Reset / base ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 1.125rem;     /* 18px */
+  line-height: 1.7;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+img, video { max-width: 100%; display: block; }
+main { flex: 1 0 auto; width: 100%; }
+
+.container { max-width: var(--col); margin-inline: auto; padding-inline: var(--pad); }
+.container--wide { max-width: var(--wide); }
+
+/* ---- Links ---- */
+a { color: var(--accent); text-decoration: none; }
+.prose a {
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 45%, transparent);
+  transition: color .15s ease, border-color .15s ease;
+}
+.prose a:hover { color: var(--accent-hover); border-bottom-color: var(--accent-hover); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+/* ---- Eyebrow (mono label) ---- */
+.eyebrow {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 0.6rem;
+}
+.eyebrow a { color: inherit; }
+.eyebrow a:hover { color: var(--text); }
+
+/* ---- Site header ---- */
+.site-header { border-bottom: 1px solid var(--line); }
+.site-header .header-inner {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1rem;
+}
+.brand {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.site-nav { display: flex; gap: 1.25rem; }
+.site-nav a {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.site-nav a:hover { color: var(--text); }
+
+/* ---- Site footer ---- */
+.site-footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--line);
+  margin-top: 5rem;
+  padding-block: 2rem;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+.site-footer .container--wide { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.site-footer a { color: var(--text-dim); }
+.site-footer a:hover { color: var(--text); }
+
+/* ---- Cover hero (full-bleed cinemascope) ---- */
+.cover-hero {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  aspect-ratio: 21 / 9;
+  max-height: 72vh;
+  overflow: hidden;
+  background: var(--surface);
+}
+.cover-hero__poster,
+.cover-hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cover-hero__video { opacity: 0; transition: opacity 600ms ease; }
+.cover-hero.is-playing .cover-hero__video { opacity: 1; }
+/* per-post tint of the DEFAULT cover only — applied to the media, not the
+   ::after fade, so the fade-into-page seam stays exact regardless of hue. */
+.cover-hero--tinted .cover-hero__poster,
+.cover-hero--tinted .cover-hero__video { filter: hue-rotate(var(--cover-hue, 0deg)); }
+/* soft fade into the page — no hard edge in dark mode */
+.cover-hero::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 140px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--ink));
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover-hero__video { display: none; }
+}
+
+/* legacy image cover (posts without a video cover) */
+.post-cover { width: 100%; border-radius: 8px; margin: 0; }
+
+/* ---- Post header (title card) ---- */
+.post-header { padding-top: 2.75rem; }
+.post-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4rem;
+}
+.post-title a { color: inherit; }
+.byline { color: var(--text-dim); font-size: 0.95rem; margin: 0; }
+.rule { border: 0; border-top: 1px solid var(--line); margin: 1.75rem 0 2.25rem; }
+
+/* ---- Prose ---- */
+.prose { padding-bottom: 1rem; }
+/* inter-block rhythm: paragraph gap is intentionally larger than the line-height
+   (~31px) so paragraph breaks read as breaks, not as wrapped lines.
+   NOTE: reset uses `.prose > *` (not `.prose p`) so it ties specificity with the
+   adjacent-sibling rule below and source order lets the gap win. */
+.prose > * { margin-block: 0; }
+.prose > * + * { margin-top: 1.9rem; }
+.prose h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.95rem;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  margin: 3.75rem 0 0;
+}
+.prose h3 {
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 3rem 0 0;
+}
+.prose h2 + *, .prose h3 + * { margin-top: 1.1rem; }
+/* media gets real room to breathe, centered, side-by-side when paired */
+.prose p:has(img), .prose p:has(video) { margin-block: 3rem; text-align: center; }
+.prose img, .prose video { border-radius: 8px; }
+.prose p > img, .prose p > video { display: inline-block; margin-inline: 0.3rem; }
+.prose p > img:only-child, .prose p > video:only-child { display: block; margin-inline: auto; }
+.prose blockquote {
+  margin: 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--accent);
+  color: var(--text-dim);
+  font-style: italic;
+}
+.prose ul, .prose ol { padding-left: 1.4rem; }
+.prose li + li { margin-top: 0.4rem; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin: 2.5rem 0; }
+
+.anchor { color: var(--text-dim); margin-left: 0.4rem; opacity: 0; text-decoration: none; }
+.prose h2:hover .anchor, .prose h3:hover .anchor { opacity: 1; }
+
+/* ---- Code ---- */
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+pre {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1.15rem 1.3rem;
+  overflow-x: auto;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+.highlight { margin: 0; }
+.highlight pre { margin: 0; }
+.prose .highlight, .prose > pre { margin-block: 2.3rem; }
+
+/* ---- Syntax highlighting (Chroma) — muted, not neon ---- */
+.chroma { color: var(--text); background: transparent; }
+.chroma .c, .chroma .ch, .chroma .cm, .chroma .c1, .chroma .cs,
+.chroma .cp, .chroma .cpf { color: var(--text-dim); font-style: italic; }
+.chroma .k, .chroma .kc, .chroma .kd, .chroma .kn, .chroma .kp,
+.chroma .kr, .chroma .kt { color: #C7B8FF; }
+.chroma .s, .chroma .sb, .chroma .sc, .chroma .s2, .chroma .s1, .chroma .se,
+.chroma .sh, .chroma .si, .chroma .sx, .chroma .sr, .chroma .ss, .chroma .dl,
+.chroma .sa { color: #9FC6A6; }
+.chroma .m, .chroma .mi, .chroma .mf, .chroma .mh, .chroma .mo,
+.chroma .il { color: #D8C08A; }
+.chroma .nf, .chroma .nx { color: var(--text); }
+.chroma .nb, .chroma .bp { color: #9FB6D8; }
+.chroma .nc, .chroma .nn, .chroma .no, .chroma .ne { color: #B8C4CF; }
+.chroma .nv, .chroma .vc, .chroma .vg, .chroma .vi { color: var(--text); }
+.chroma .nt, .chroma .na { color: #9FB6D8; }
+.chroma .o, .chroma .ow, .chroma .p { color: var(--text-dim); }
+.chroma .gp { color: var(--text-dim); }
+.chroma .err { color: #E08A8A; }
+.chroma .ln, .chroma .lnt { color: var(--text-dim); opacity: 0.5; }
+
+/* ---- Home / list ---- */
+.masthead { padding-top: 3.5rem; padding-bottom: 0.5rem; }
+.wordmark {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 7vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.5rem;
+}
+.subtitle { color: var(--text-dim); font-size: 1.05rem; max-width: 36rem; margin: 0; }
+
+.post-list { list-style: none; margin: 2rem 0 0; padding: 0; }
+.card { border-top: 1px solid var(--line); }
+.card:last-child { border-bottom: 1px solid var(--line); }
+.card-link {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  padding: 1.75rem 0;
+  color: inherit;
+}
+.card-thumb {
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.card-thumb--tinted img { filter: hue-rotate(var(--cover-hue, 0deg)); }
+.card-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.85rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0.1rem 0 0.5rem;
+  transition: color .15s ease;
+}
+.card-link:hover .card-title { color: var(--accent-hover); }
+.card-desc { color: var(--text-dim); font-size: 0.98rem; margin: 0; }
+
+/* ---- Post navigation (prev/next) ---- */
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.post-nav a { color: var(--text-dim); }
+.post-nav a:hover { color: var(--text); }
+
+/* ---- Tag cloud (terms) ---- */
+.tag-cloud { list-style: none; margin: 2.5rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.tag-cloud a {
+  display: inline-flex; align-items: baseline; gap: 0.4rem;
+  font-family: var(--mono); font-size: 0.85rem;
+  color: var(--text-dim);
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+}
+.tag-cloud a:hover { color: var(--text); border-color: var(--text-dim); }
+.tag-cloud span { font-size: 0.72rem; opacity: 0.6; }
+
+/* ---- 404 ---- */
+.notfound { padding-block: 6rem 4rem; text-align: center; }
+.notfound .byline { margin-top: 1rem; }
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  body { font-size: 1.0625rem; }
+  .cover-hero { aspect-ratio: 16 / 9; max-height: 56vh; }
+  .card-link { grid-template-columns: 1fr; gap: 0.9rem; }
+  .card-thumb { max-width: 220px; }
+}

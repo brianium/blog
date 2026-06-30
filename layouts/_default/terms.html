@@ -1,0 +1,12 @@
+{{ define "main" }}
+<div class="container container--wide">
+  <header class="masthead">
+    <h1 class="wordmark">{{ .Title }}</h1>
+  </header>
+  <ul class="tag-cloud">
+    {{ range .Data.Terms.Alphabetical }}
+      <li><a href="{{ .Page.RelPermalink }}">#{{ .Page.Title }} <span>{{ .Count }}</span></a></li>
+    {{ end }}
+  </ul>
+</div>
+{{ end }}
