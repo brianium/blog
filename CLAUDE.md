@@ -67,23 +67,47 @@ override also conditionally loads `static/style.css`, `static/og-image.png`, and
 hugo new posts/my-post-slug/index.md
 ```
 
-Front matter is TOML (`+++` fences). Real example in
-`content/posts/cogs-agents-as-channels/index.md`:
+Front matter is TOML (`+++` fences):
 
 ```toml
 +++
 title = "Cogs: Agents as Channels"
 date = "2025-12-01T10:58:42-05:00"
 author = "Brian Scaturro"
-cover = "channel.gif"          # filename relative to this post's bundle dir
 tags = ["clojure", "realtime", "ai"]
-description = "..."            # used for SEO meta + OG description
-showFullContent = false
+description = "..."                  # SEO meta + OG/social description
+
+# Cover (optional — see "Video cover convention" below):
+coverPoster = "cover-poster.jpg"    # still that IS the cover (LCP); doubles as OG + card thumb
+coverVideo  = "cover.mp4"           # ~5s muted loop; the .webm sibling is auto-discovered
 +++
 ```
 
-Drop cover/inline images into the same directory as `index.md` and reference them by
-filename. The `cover` value is also used as the Open Graph image.
+Drop inline images into the same directory as `index.md` and reference them by filename
+(e.g. `![alt](channel.gif)`).
+
+### Video cover convention (the signature)
+
+Every post shows a **full-bleed cinemascope video cover** at the top. How a post gets one:
+
+- **Give it its own cover** — drop three files into the post's bundle dir and set the two
+  front-matter keys above:
+  - `cover-poster.jpg` — the still frame (the real cover; it's the LCP image)
+  - `cover.mp4` (H.264) **and** `cover.webm` (VP9) — a short (~5s), muted, looping clip;
+    author at ~21:9 if you can (16:9 works, it's center-cropped to the band)
+  - then `coverPoster = "cover-poster.jpg"` and `coverVideo = "cover.mp4"` (the `.webm` is
+    found automatically). All three files are committed into the bundle.
+- **Or set nothing** — the post automatically falls back to the **site-default ambient cover**
+  in `assets/cover/` (`default.mp4` / `.webm` / `default-poster.jpg`), tinted to a stable hue
+  derived from the post title, so every post still has a distinct cover until a real one exists.
+
+The poster doubles as the Open Graph/social image and the home/list card thumbnail. Guardrails
+(poster-first LCP, video lazy-loads over the poster, `prefers-reduced-motion` → poster only)
+are automatic. Real covers come from the `storyboard` pipeline in the `ascolais` monorepo.
+
+Implementation: `layouts/partials/cover-assets.html` (resolution + default fallback + tint) →
+`cover-hero.html` (markup) → `assets/js/cover-hero.js` + `.cover-hero` in `assets/css/main.css`.
+Full design spec in `DESIGN.md`.
 
 ## Design direction (north star)
 
