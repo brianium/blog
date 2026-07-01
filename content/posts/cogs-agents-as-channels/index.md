@@ -12,6 +12,8 @@ description = "A deep dive into treating LLM-powered agents as core.async-style 
 showFullContent = false
 readingTime = false
 hideComments = false
+coverPoster = "cover-poster.jpg"
+coverVideo = "cover.mp4"
 +++
 
 ![Two cog agents passing a value across a Clojure core.async channel](channel.gif)
